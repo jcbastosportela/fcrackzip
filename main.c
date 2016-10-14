@@ -41,7 +41,7 @@ static int min_length = -1;
 static int max_length = -1;
 static int residuent = 0;
 static int modul = 1;
-
+static int b_silent = 0;
 static FILE *dict_file;
 
 int REGPARAM
@@ -85,7 +85,7 @@ true_callback (const char *pw, const char *info)
 static int
 print_callback (const char *pw, const char *info)
 {
-  if (!use_unzip || check_unzip (pw))
+  if ( 0==b_silent && (!use_unzip || check_unzip (pw)) )
     {
       printf ("possible pw found: %s (%s)\n", pw, info ? info : "");
       /*exit(0); */
@@ -363,7 +363,9 @@ main (int argc, char *argv[])
   char *charset = "aA1!";
   enum { m_benchmark, m_brute_force, m_dictionary } mode = m_brute_force;
 
-  while ((c = getopt_long (argc, argv, "DbBc:hVvp:l:um:2:", options, &option_index)) != -1)
+  b_silent = 0;
+
+  while ((c = getopt_long (argc, argv, "DbBc:hVvp:l:um:2:s", options, &option_index)) != -1)
     switch (c)
       {
       case 'b':
@@ -451,6 +453,10 @@ main (int argc, char *argv[])
       case '?':
         fprintf (stderr, "unknown option\n");
         exit (1);
+
+      case 's':
+        b_silent = 1;
+        break;
 
       default:
         usage (1);
